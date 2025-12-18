@@ -23,6 +23,7 @@ private var hookingDidMoveToWindowTokenKey = 0
 private var hookingViewDidDisappearTokenKey = 0
 private var notificationTokensKey = 0
 private var timerKey = 0
+private var isKeyboardVisibleKey = 0
 
 extension UIView {
            
