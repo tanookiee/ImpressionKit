@@ -305,10 +305,6 @@ extension UIView {
                 self.impressionState = .viewControllerDidDisappear
                 return
             }
-            if !self.impressionState.isImpressed {
-                self.impressionState = .viewControllerDidDisappear
-            }
-            return
         }
         
         // leftScreen
