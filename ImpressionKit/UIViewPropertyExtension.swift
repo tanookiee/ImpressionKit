@@ -220,4 +220,12 @@ extension UIView {
         }
     }
     
+    var isKeyboardVisible: Bool {
+        set {
+            objc_setAssociatedObject(self, &isKeyboardVisibleKey, newValue, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
+        }
+        get {
+            return objc_getAssociatedObject(self, &isKeyboardVisibleKey) as? Bool ?? false
+        }
+    }
 }
