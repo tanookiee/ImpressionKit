@@ -176,9 +176,10 @@ extension UIView {
         if self.isRedetectionOn(.didBecomeActive) {
             names.append(UIApplication.didBecomeActiveNotification)
         }
-        guard names.count > 0 else {
-            return
-        }
+        
+        names.append(UIApplication.keyboardDidHideNotification)
+        names.append(UIApplication.keyboardDidShowNotification)
+        
         var tokens = [NSObjectProtocol]()
         for name in names {
             let token = NotificationCenter.default.addObserver(forName: name, object: nil, queue: nil, using: {[weak self] notification in
@@ -191,6 +192,10 @@ extension UIView {
                     self.impressionState = .willResignActive
                 } else if notification.name == UIApplication.didBecomeActiveNotification {
                     self.impressionState = .didBecomeActive
+                } else if notification.name == UIApplication.keyboardDidHideNotification {
+                    self.isKeyboardVisible = false
+                } else if notification.name == UIApplication.keyboardDidShowNotification {
+                    self.isKeyboardVisible = true
                 } else {
                     assert(false)
                     return
