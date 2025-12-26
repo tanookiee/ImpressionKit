@@ -317,20 +317,6 @@ extension UIView {
             }
         }
         
-        // keyboard
-        if isKeyboardVisible == false {
-            // presented
-            // If current view controller presented (non-full screen) a UIViewController, the viewDidDisappear of it will not be called. We need this logic to udpate the state.
-            if let vc = self.parentViewController,
-               vc.presentedViewController != nil {
-                guard !self.isRedetectionOn(.viewControllerDidDisappear) else {
-                    self.impressionState = .viewControllerDidDisappear
-                    return
-                }
-                return
-            }
-        }
-        
         // leftScreen
         if self.impressionState.isImpressed {
             guard self.isRedetectionOn(.leftScreen) else {
