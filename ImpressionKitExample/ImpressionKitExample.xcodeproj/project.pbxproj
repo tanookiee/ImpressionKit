@@ -18,6 +18,7 @@
 		62F7F59526A973A9003DF049 /* SwiftUIListDemoView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 62F7F59426A973A9003DF049 /* SwiftUIListDemoView.swift */; };
 		634294AE6E2BB68D33D5D7F6 /* Pods_ImpressionKitExample.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6E14EEC2186D571924183418 /* Pods_ImpressionKitExample.framework */; };
 		9CB13B7526AD634900A510F9 /* SwiftUIScrollViewDemoView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9CB13B7426AD634900A510F9 /* SwiftUIScrollViewDemoView.swift */; };
+		A53E9B0F2EFA0E3D009479EA /* CollectionViewDemoKeyboardViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A53E9B0E2EFA0E35009479EA /* CollectionViewDemoKeyboardViewController.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -34,6 +35,7 @@
 		62F7F59426A973A9003DF049 /* SwiftUIListDemoView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SwiftUIListDemoView.swift; sourceTree = "<group>"; };
 		6E14EEC2186D571924183418 /* Pods_ImpressionKitExample.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_ImpressionKitExample.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		9CB13B7426AD634900A510F9 /* SwiftUIScrollViewDemoView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SwiftUIScrollViewDemoView.swift; sourceTree = "<group>"; };
+		A53E9B0E2EFA0E35009479EA /* CollectionViewDemoKeyboardViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CollectionViewDemoKeyboardViewController.swift; sourceTree = "<group>"; };
 		D6FDACE8F7FE7BF61899FD4A /* Pods-ImpressionKitExample.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ImpressionKitExample.debug.xcconfig"; path = "Target Support Files/Pods-ImpressionKitExample/Pods-ImpressionKitExample.debug.xcconfig"; sourceTree = "<group>"; };
 		E93E5965889DA252ED3ECF35 /* Pods-ImpressionKitExample.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ImpressionKitExample.release.xcconfig"; path = "Target Support Files/Pods-ImpressionKitExample/Pods-ImpressionKitExample.release.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -83,6 +85,7 @@
 				5C87C65B2664DB48006E824E /* HomeViewController.swift */,
 				5C87C6602664F2B5006E824E /* ScrollViewDemoViewController.swift */,
 				5C87C6652664F327006E824E /* CollectionViewDemoViewController.swift */,
+				A53E9B0E2EFA0E35009479EA /* CollectionViewDemoKeyboardViewController.swift */,
 				2AA9DA44279A9E7200A9C06A /* CollectionViewDemo2ViewController.swift */,
 				5C4B30D3266D026900B61135 /* TableViewDemoViewController.swift */,
 				9CB13B7426AD634900A510F9 /* SwiftUIScrollViewDemoView.swift */,
@@ -178,9 +181,13 @@
 			inputFileListPaths = (
 				"${PODS_ROOT}/Target Support Files/Pods-ImpressionKitExample/Pods-ImpressionKitExample-frameworks-${CONFIGURATION}-input-files.xcfilelist",
 			);
+			inputPaths = (
+			);
 			name = "[CP] Embed Pods Frameworks";
 			outputFileListPaths = (
 				"${PODS_ROOT}/Target Support Files/Pods-ImpressionKitExample/Pods-ImpressionKitExample-frameworks-${CONFIGURATION}-output-files.xcfilelist",
+			);
+			outputPaths = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
@@ -219,6 +226,7 @@
 				5C87C6662664F327006E824E /* CollectionViewDemoViewController.swift in Sources */,
 				62F7F59526A973A9003DF049 /* SwiftUIListDemoView.swift in Sources */,
 				5C87C6612664F2B5006E824E /* ScrollViewDemoViewController.swift in Sources */,
+				A53E9B0F2EFA0E3D009479EA /* CollectionViewDemoKeyboardViewController.swift in Sources */,
 				9CB13B7526AD634900A510F9 /* SwiftUIScrollViewDemoView.swift in Sources */,
 				5C87C65C2664DB48006E824E /* HomeViewController.swift in Sources */,
 				5C4B30D4266D026900B61135 /* TableViewDemoViewController.swift in Sources */,
