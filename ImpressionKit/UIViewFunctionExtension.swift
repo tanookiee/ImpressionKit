@@ -193,7 +193,7 @@ extension UIView {
         }
         
         names.append(UIApplication.keyboardDidHideNotification)
-        names.append(UIApplication.keyboardDidShowNotification)
+        names.append(UIApplication.keyboardWillShowNotification)
         
         var tokens = [NSObjectProtocol]()
         for name in names {
@@ -209,7 +209,7 @@ extension UIView {
                     self.impressionState = .didBecomeActive
                 } else if notification.name == UIApplication.keyboardDidHideNotification {
                     self.isKeyboardVisible = false
-                } else if notification.name == UIApplication.keyboardDidShowNotification {
+                } else if notification.name == UIApplication.keyboardWillShowNotification {
                     self.isKeyboardVisible = true
                 } else {
                     assert(false)
