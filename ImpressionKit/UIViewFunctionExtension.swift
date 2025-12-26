@@ -14,6 +14,21 @@ import EasySwiftHook
 
 private var impressionCallbackKey = 0
 
+// MARK: - Keyboard Frame (Global)
+private extension UIView {
+    static var _currentKeyboardFrame: CGRect? {
+        get { objc_getAssociatedObject(self, &UIView._keyboardFrameKey) as? CGRect }
+        set { objc_setAssociatedObject(self, &UIView._keyboardFrameKey, newValue, .OBJC_ASSOCIATION_RETAIN_NONATOMIC) }
+    }
+    static var _keyboardFrameKey: UInt8 = 0
+    static var currentKeyboardFrame: CGRect? {
+        _currentKeyboardFrame
+    }
+    static func setCurrentKeyboardFrame(_ frame: CGRect?) {
+        _currentKeyboardFrame = frame
+    }
+}
+
 public protocol ImpressionProtocol: UIView {}
 
 extension UIView: ImpressionProtocol {}
