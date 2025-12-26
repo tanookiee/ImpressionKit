@@ -209,8 +209,13 @@ extension UIView {
                     self.impressionState = .didBecomeActive
                 } else if notification.name == UIApplication.keyboardDidHideNotification {
                     self.isKeyboardVisible = false
+                    UIView.setCurrentKeyboardFrame(nil)
                 } else if notification.name == UIApplication.keyboardWillShowNotification {
                     self.isKeyboardVisible = true
+                    if let userInfo = notification.userInfo,
+                       let frameValue = userInfo[UIResponder.keyboardFrameEndUserInfoKey] as? NSValue {
+                        UIView.setCurrentKeyboardFrame(frameValue.cgRectValue)
+                    }
                 } else {
                     assert(false)
                     return
