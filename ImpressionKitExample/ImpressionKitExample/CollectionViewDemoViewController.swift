@@ -43,6 +43,10 @@ class CollectionViewDemoViewController: UIViewController, UICollectionViewDataSo
             UIBarButtonItem.init(title: "redetect", style: .plain, target: self, action: #selector(redetect)),
         ]
         
+        if #available(iOS 15.0, *) {
+            self.navigationItem.rightBarButtonItems?.append(UIBarButtonItem.init(title: "half sheet", style: .plain, target: self, action: #selector(presentHalfSheet)))
+        }
+        
         self.collectionView.frame = self.view.bounds
         self.collectionView.dataSource = self
         self.collectionView.delegate = self
@@ -68,6 +72,27 @@ class CollectionViewDemoViewController: UIViewController, UICollectionViewDataSo
         backButton.addTarget(self, action: #selector(back), for: .touchUpInside)
         backButton.center = CGPoint.init(x: nextPage.view.frame.width / 2, y: nextPage.view.frame.height / 2)
         nextPage.view.addSubview(backButton)
+        self.present(nextPage, animated: true, completion: nil)
+    }
+    
+    @available(iOS 15.0, *)
+    @objc private func presentHalfSheet() {
+        let nextPage = UIViewController()
+        nextPage.view.backgroundColor = .white
+        let backButton = UIButton.init(frame: CGRect.init(x: 0, y: 0, width: 100, height: 40))
+        backButton.setTitle("back", for: .normal)
+        backButton.setTitleColor(.black, for: .normal)
+        backButton.addTarget(self, action: #selector(back), for: .touchUpInside)
+        backButton.center = CGPoint.init(x: nextPage.view.frame.width / 2, y: nextPage.view.frame.height / 2)
+        nextPage.view.addSubview(backButton)
+
+        if let sheet = nextPage.sheetPresentationController {
+            sheet.detents = [.medium()]
+            sheet.largestUndimmedDetentIdentifier = .medium
+            sheet.prefersScrollingExpandsWhenScrolledToEdge = false
+            sheet.prefersEdgeAttachedInCompactHeight = true
+            sheet.widthFollowsPreferredContentSizeWhenEdgeAttached = true
+        }
         self.present(nextPage, animated: true, completion: nil)
     }
     
