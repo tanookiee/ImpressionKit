@@ -294,8 +294,35 @@ extension UIView {
                     return self.fixRatioPrecision(number: Float(ratio))
                 }
             }
+            // Subtract intersection with any presented modal view controllers
+            if let rootVC = window.rootViewController {
+                var vc: UIViewController? = rootVC.presentedViewController
+                while let presented = vc {
+                    // If the presented VC's view is loaded and visible
+                    if let presentedView = presented.viewIfLoaded, !presentedView.isHidden, presentedView.alpha > 0.01 {
+                        // Convert its frame to screen coordinates
+                        let presentedFrameInWindow = presentedView.convert(presentedView.bounds, to: window)
+                        let presentedFrameInScreen = CGRect(
+                            x: presentedFrameInWindow.origin.x + window.frame.origin.x,
+                            y: presentedFrameInWindow.origin.y + window.frame.origin.y,
+                            width: presentedFrameInWindow.width,
+                            height: presentedFrameInWindow.height
+                        )
+                        // Subtract intersection
+                        let covered = frameInScreen.intersection(presentedFrameInScreen)
+                        if !covered.isEmpty {
+                            let coveredArea = covered.width * covered.height
+                            visibleArea = max(0, visibleArea - coveredArea)
+                        }
+                    }
+                    // Move to next modal in stack, if any
+                    vc = presented.presentedViewController
+                }
+            }
+
             let intersection = frameInScreen.intersection(window.screen.bounds)
-            let ratio = (intersection.width * intersection.height) / (self.frame.width * self.frame.height)
+            let displayedArea = min(visibleArea, intersection.width * intersection.height)
+            let ratio = displayedArea / (self.frame.width * self.frame.height)
             return self.fixRatioPrecision(number: Float(ratio))
         }
     }
