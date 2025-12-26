@@ -274,6 +274,26 @@ extension UIView {
                                             y: frameInWindow.origin.y + window.frame.origin.y,
                                             width: frameInWindow.width,
                                             height: frameInWindow.height)
+
+            var visibleArea = frameInScreen.width * frameInScreen.height
+            
+            if isKeyboardVisible {
+                if let keyboardFrame = UIView.currentKeyboardFrame {
+                    let overlapped = frameInScreen.intersection(keyboardFrame)
+                    if !overlapped.isEmpty {
+                        // Subtract overlapped area from visible area
+                        let visibleArea = frameInScreen.width * frameInScreen.height
+                        let overlappedArea = overlapped.width * overlapped.height
+                        let area = max(0, visibleArea - overlappedArea)
+                        let ratio = area / (self.frame.width * self.frame.height)
+                        return self.fixRatioPrecision(number: Float(ratio))
+                    }
+                    
+                    let intersection = frameInScreen.intersection(window.screen.bounds)
+                    let ratio = (intersection.width * intersection.height) / (self.frame.width * self.frame.height)
+                    return self.fixRatioPrecision(number: Float(ratio))
+                }
+            }
             let intersection = frameInScreen.intersection(window.screen.bounds)
             let ratio = (intersection.width * intersection.height) / (self.frame.width * self.frame.height)
             return self.fixRatioPrecision(number: Float(ratio))
