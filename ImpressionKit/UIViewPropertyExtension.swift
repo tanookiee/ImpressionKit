@@ -23,6 +23,7 @@ private var hookingDidMoveToWindowTokenKey = 0
 private var hookingViewDidDisappearTokenKey = 0
 private var notificationTokensKey = 0
 private var timerKey = 0
+private var isKeyboardVisibleKey = 0
 
 extension UIView {
            
@@ -219,4 +220,12 @@ extension UIView {
         }
     }
     
+    var isKeyboardVisible: Bool {
+        set {
+            objc_setAssociatedObject(self, &isKeyboardVisibleKey, newValue, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
+        }
+        get {
+            return objc_getAssociatedObject(self, &isKeyboardVisibleKey) as? Bool ?? false
+        }
+    }
 }

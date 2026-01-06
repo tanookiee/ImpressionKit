@@ -14,6 +14,21 @@ import EasySwiftHook
 
 private var impressionCallbackKey = 0
 
+// MARK: - Keyboard Frame (Global)
+private extension UIView {
+    static var _currentKeyboardFrame: CGRect? {
+        get { objc_getAssociatedObject(self, &UIView._keyboardFrameKey) as? CGRect }
+        set { objc_setAssociatedObject(self, &UIView._keyboardFrameKey, newValue, .OBJC_ASSOCIATION_RETAIN_NONATOMIC) }
+    }
+    static var _keyboardFrameKey: UInt8 = 0
+    static var currentKeyboardFrame: CGRect? {
+        _currentKeyboardFrame
+    }
+    static func setCurrentKeyboardFrame(_ frame: CGRect?) {
+        _currentKeyboardFrame = frame
+    }
+}
+
 public protocol ImpressionProtocol: UIView {}
 
 extension UIView: ImpressionProtocol {}
@@ -176,9 +191,10 @@ extension UIView {
         if self.isRedetectionOn(.didBecomeActive) {
             names.append(UIApplication.didBecomeActiveNotification)
         }
-        guard names.count > 0 else {
-            return
-        }
+        
+        names.append(UIApplication.keyboardDidHideNotification)
+        names.append(UIApplication.keyboardWillShowNotification)
+        
         var tokens = [NSObjectProtocol]()
         for name in names {
             let token = NotificationCenter.default.addObserver(forName: name, object: nil, queue: nil, using: {[weak self] notification in
@@ -191,6 +207,15 @@ extension UIView {
                     self.impressionState = .willResignActive
                 } else if notification.name == UIApplication.didBecomeActiveNotification {
                     self.impressionState = .didBecomeActive
+                } else if notification.name == UIApplication.keyboardDidHideNotification {
+                    self.isKeyboardVisible = false
+                    UIView.setCurrentKeyboardFrame(nil)
+                } else if notification.name == UIApplication.keyboardWillShowNotification {
+                    self.isKeyboardVisible = true
+                    if let userInfo = notification.userInfo,
+                       let frameValue = userInfo[UIResponder.keyboardFrameEndUserInfoKey] as? NSValue {
+                        UIView.setCurrentKeyboardFrame(frameValue.cgRectValue)
+                    }
                 } else {
                     assert(false)
                     return
@@ -249,8 +274,55 @@ extension UIView {
                                             y: frameInWindow.origin.y + window.frame.origin.y,
                                             width: frameInWindow.width,
                                             height: frameInWindow.height)
+
+            var visibleArea = frameInScreen.width * frameInScreen.height
+            
+            if isKeyboardVisible {
+                if let keyboardFrame = UIView.currentKeyboardFrame {
+                    let overlapped = frameInScreen.intersection(keyboardFrame)
+                    if !overlapped.isEmpty {
+                        // Subtract overlapped area from visible area
+                        let visibleArea = frameInScreen.width * frameInScreen.height
+                        let overlappedArea = overlapped.width * overlapped.height
+                        let area = max(0, visibleArea - overlappedArea)
+                        let ratio = area / (self.frame.width * self.frame.height)
+                        return self.fixRatioPrecision(number: Float(ratio))
+                    }
+                    
+                    let intersection = frameInScreen.intersection(window.screen.bounds)
+                    let ratio = (intersection.width * intersection.height) / (self.frame.width * self.frame.height)
+                    return self.fixRatioPrecision(number: Float(ratio))
+                }
+            }
+            // Subtract intersection with any presented modal view controllers
+            if let rootVC = window.rootViewController {
+                var vc: UIViewController? = rootVC.presentedViewController
+                while let presented = vc {
+                    // If the presented VC's view is loaded and visible
+                    if let presentedView = presented.viewIfLoaded, !presentedView.isHidden, presentedView.alpha > 0.01 {
+                        // Convert its frame to screen coordinates
+                        let presentedFrameInWindow = presentedView.convert(presentedView.bounds, to: window)
+                        let presentedFrameInScreen = CGRect(
+                            x: presentedFrameInWindow.origin.x + window.frame.origin.x,
+                            y: presentedFrameInWindow.origin.y + window.frame.origin.y,
+                            width: presentedFrameInWindow.width,
+                            height: presentedFrameInWindow.height
+                        )
+                        // Subtract intersection
+                        let covered = frameInScreen.intersection(presentedFrameInScreen)
+                        if !covered.isEmpty {
+                            let coveredArea = covered.width * covered.height
+                            visibleArea = max(0, visibleArea - coveredArea)
+                        }
+                    }
+                    // Move to next modal in stack, if any
+                    vc = presented.presentedViewController
+                }
+            }
+
             let intersection = frameInScreen.intersection(window.screen.bounds)
-            let ratio = (intersection.width * intersection.height) / (self.frame.width * self.frame.height)
+            let displayedArea = min(visibleArea, intersection.width * intersection.height)
+            let ratio = displayedArea / (self.frame.width * self.frame.height)
             return self.fixRatioPrecision(number: Float(ratio))
         }
     }
@@ -290,20 +362,6 @@ extension UIView {
                 self.impressionState = .willResignActive
                 return
             }
-        }
-        
-        // presented
-        // If current view controller presented (non-full screen) a UIViewController, the viewDidDisappear of it will not be called. We need this logic to udpate the state.
-        if let vc = self.parentViewController,
-           vc.presentedViewController != nil {
-            guard !self.isRedetectionOn(.viewControllerDidDisappear) else {
-                self.impressionState = .viewControllerDidDisappear
-                return
-            }
-            if !self.impressionState.isImpressed {
-                self.impressionState = .viewControllerDidDisappear
-            }
-            return
         }
         
         // leftScreen

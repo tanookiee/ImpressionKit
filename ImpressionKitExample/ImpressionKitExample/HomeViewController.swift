@@ -121,6 +121,12 @@ class HomeViewController: FormViewController {
                 return CollectionViewDemo2ViewController()
             }), onDismiss: nil)
         }
+        <<< ButtonRow("UICollectionView with keyboard (reusable views)") { row in
+            row.title = row.tag
+            row.presentationMode = .show(controllerProvider: ControllerProvider<UIViewController>.callback(builder: { () -> UIViewController in
+                return CollectionViewDemoKeyboardViewController()
+            }), onDismiss: nil)
+        }
         <<< ButtonRow("UITableView (reusable views)") { row in
             row.title = row.tag
             row.presentationMode = .show(controllerProvider: ControllerProvider<UIViewController>.callback(builder: { () -> UIViewController in

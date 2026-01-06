@@ -1,15 +1,8 @@
-//
-//  CollectionViewDemoViewController.swift
-//  ImpressionKitExample
-//
-//  Created by Yanni Wang on 31/5/21.
-//
-
 import UIKit
 import CHTCollectionViewWaterfallLayout
 import ImpressionKit
 
-class CollectionViewDemoViewController: UIViewController, UICollectionViewDataSource, CHTCollectionViewDelegateWaterfallLayout {
+class CollectionViewDemoKeyboardViewController: UIViewController, UICollectionViewDataSource, CHTCollectionViewDelegateWaterfallLayout, UISearchControllerDelegate {
     
     let collectionView = { () -> UICollectionView in
         let layout = CHTCollectionViewWaterfallLayout.init()
@@ -31,26 +24,40 @@ class CollectionViewDemoViewController: UIViewController, UICollectionViewDataSo
             cell.updateUI(state: state)
         }
     }
+    
+    let searchController = UISearchController()
         
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        if #available(iOS 13.0, *) {
+            searchController.automaticallyShowsCancelButton = true
+            searchController.hidesNavigationBarDuringPresentation = false
+            searchController.automaticallyShowsSearchResultsController = false
+            searchController.searchBar.searchTextField.autocapitalizationType = .none
+        }
+        searchController.delegate = self
+        
         self.view.backgroundColor = .white
         self.title = "UICollectionView"
-        
-        self.navigationItem.rightBarButtonItems = [
-            UIBarButtonItem.init(title: "push", style: .plain, target: self, action: #selector(pushNextPage)),
-            UIBarButtonItem.init(title: "present", style: .plain, target: self, action: #selector(presentNextPage)),
-            UIBarButtonItem.init(title: "redetect", style: .plain, target: self, action: #selector(redetect)),
-        ]
-        
-        if #available(iOS 15.0, *) {
-            self.navigationItem.rightBarButtonItems?.append(UIBarButtonItem.init(title: "half sheet", style: .plain, target: self, action: #selector(presentHalfSheet)))
-        }
         
         self.collectionView.frame = self.view.bounds
         self.collectionView.dataSource = self
         self.collectionView.delegate = self
         self.view.addSubview(self.collectionView)
+        navigationItem.titleView = searchController.searchBar
+        if #available(iOS 16.0, *) {
+            navigationItem.preferredSearchBarPlacement = .stacked
+        } else {
+            // Fallback on earlier versions
+        }
+    }
+    
+    func didPresentSearchController(_ searchController: UISearchController) {
+        // Hack to activate the search bar by default.
+        DispatchQueue.main.async {
+            searchController.searchBar.becomeFirstResponder()
+        }
     }
     
     @objc private func redetect() {
@@ -72,27 +79,6 @@ class CollectionViewDemoViewController: UIViewController, UICollectionViewDataSo
         backButton.addTarget(self, action: #selector(back), for: .touchUpInside)
         backButton.center = CGPoint.init(x: nextPage.view.frame.width / 2, y: nextPage.view.frame.height / 2)
         nextPage.view.addSubview(backButton)
-        self.present(nextPage, animated: true, completion: nil)
-    }
-    
-    @available(iOS 15.0, *)
-    @objc private func presentHalfSheet() {
-        let nextPage = UIViewController()
-        nextPage.view.backgroundColor = .white
-        let backButton = UIButton.init(frame: CGRect.init(x: 0, y: 0, width: 100, height: 40))
-        backButton.setTitle("back", for: .normal)
-        backButton.setTitleColor(.black, for: .normal)
-        backButton.addTarget(self, action: #selector(back), for: .touchUpInside)
-        backButton.center = CGPoint.init(x: nextPage.view.frame.width / 2, y: nextPage.view.frame.height / 2)
-        nextPage.view.addSubview(backButton)
-
-        if let sheet = nextPage.sheetPresentationController {
-            sheet.detents = [.medium()]
-            sheet.largestUndimmedDetentIdentifier = .medium
-            sheet.prefersScrollingExpandsWhenScrolledToEdge = false
-            sheet.prefersEdgeAttachedInCompactHeight = true
-            sheet.widthFollowsPreferredContentSizeWhenEdgeAttached = true
-        }
         self.present(nextPage, animated: true, completion: nil)
     }
     
